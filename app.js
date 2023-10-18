@@ -1,33 +1,38 @@
 const express = require("express");
+const logger = require("morgan");
+const helmet = require("helmet");
+const cors = require('cors');
+
+
+const todoController = require("./controllers/todoController");
+const userController = require("./controllers/userController");
+
 
 const app = express();
 app.set('port', 5000);
 app.use(express.json());
+app.use(logger('combined'));
+app.use(helmet());
+app.use(cors());
 
 
 app.get('/', (req, res, next) => {
-    console.log("Teste de API");
-
-    return res.status(200).json({ message: "Hello Daniel Lima" });
+    return res.status(200).json({ message: "On-line" });
 });
 
-app.post('/soma/:num1/:num2', (req, res, next) => {
-    const { num1, num2 } = req.params;
 
-    const data = {
-        numero1: parseInt(num1),
-        numero2: parseInt(num2),
-        soma: parseInt(num1) + parseInt(num2)
-    };
+app.get('/todo', todoController.getAllTodo);
+app.get('/todo/:id', todoController.getOneTodo);
+app.post('/todo', todoController.postTodo);
+app.put('/todo/:id', todoController.putTodo);
+app.delete('/todo/:id', todoController.deleteTodo);
 
-    return res.status(200).json(data);
-});
+app.get('/user', userController.getAllUser);
+app.get('/user/:id', userController.getOneUser);
+app.post('/user', userController.postUser);
+app.put('/user/:id', userController.putUser);
+app.delete('/user/:id', userController.deleteUser);
 
-app.put('/texto', (req, res, next) => {
-    const { texto } = req.body;
-
-    return res.status(200).json({ message: texto });
-});
 
 app.listen(5000, () => {
     console.log("Backend Service from Daniel Lima Studies");
